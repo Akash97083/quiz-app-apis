@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateQuizDTO } from './dto/create-quiz.dto';
@@ -16,23 +16,46 @@ export class QuizService {
     return this.quizRepository.find();
   }
 
-  getQuiz(id: number): Promise<QuizEntity> {
-    return this.quizRepository.findOne({
+  async getQuiz(id: number): Promise<QuizEntity> {
+    const quiz = await this.quizRepository.findOne({
       where: {
         id,
       },
     });
+
+    if (!quiz) {
+      throw new NotFoundException(`Quiz with id ${id} not found`);
+    }
+    return quiz;
   }
 
   createQuiz(quizData: CreateQuizDTO) {
     return this.quizRepository.save(quizData);
   }
 
-  updateQuiz(id: number, quizData: UpdateQuizDTO) {
+  async updateQuiz(id: number, quizData: UpdateQuizDTO) {
+    const quiz = await this.quizRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!quiz) {
+      throw new NotFoundException(`Quiz with id ${id} not found`);
+    }
     return this.quizRepository.update(id, quizData);
   }
 
-  deleteQuiz(id: number) {
+  async deleteQuiz(id: number) {
+    const quiz = await this.quizRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!quiz) {
+      throw new NotFoundException(`Quiz with id ${id} not found`);
+    }
     return this.quizRepository.delete(id);
   }
 }
