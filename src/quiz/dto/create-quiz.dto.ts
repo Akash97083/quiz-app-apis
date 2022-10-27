@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length } from 'class-validator';
+import { Allow, IsNotEmpty, Length } from 'class-validator';
 
 export class CreateQuizDTO {
   @IsNotEmpty({
@@ -6,5 +6,6 @@ export class CreateQuizDTO {
   })
   title: string;
 
+  @Allow()
   description: string;
 }
